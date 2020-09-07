@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<included>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %green(%d{ISO8601}) %highlight(%-5level) [%blue(%t)] %yellow(%c{1.}): %msg%n%throwable
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="SUMMARY" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%yellow(%d{ISO8601}) %highlight(%-5level) %msg{bright,white}%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/app.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/app.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- days to keep -->
+            <maxHistory>30</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{ISO8601} %level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE-ROLLING-EXCEPTION" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>logs/exceptions.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>logs/archived/exceptions.%d{yyyy-MM-dd}.%i.log.zip</fileNamePattern>
+            <maxFileSize>10MB</maxFileSize>
+            <totalSizeCap>2GB</totalSizeCap>
+            <!-- days to keep -->
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{ISO8601} %level %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="nl.terrax.camel.logging.writer.ExchangeEventWriter"
+            level="INFO"
+            additivity="false">
+        <appender-ref
+                ref="FILE-ROLLING"/>
+    </logger>
+
+    <logger name="nl.terrax.camel.logging.writer.ExchangeEventSummaryWriter"
+            level="INFO"
+            additivity="false">
+        <appender-ref ref="SUMMARY"/>
+    </logger>
+
+    <logger name="nl.terrax.camel.logging.util.ExceptionLogger"
+            level="INFO"
+            additivity="false">
+        <appender-ref ref="FILE-ROLLING-EXCEPTION"/>
+    </logger>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+</included>
